@@ -54,6 +54,11 @@ var ExecCmd = cli.Command{
 			Value: "",
 			Usage: "identify file injected in the container",
 		},
+		cli.StringFlag{
+			Name:  "n",
+			Value: "",
+			Usage: ".netrc file injected in the container",
+		},
 		cli.StringSliceFlag{
 			Name:  "e",
 			Usage: "secret environment variables",
@@ -213,7 +218,19 @@ func execCmd(c *cli.Context) error {
 			},
 		}
 
-		// gets the ssh key if provided
+		if len(c.String("n")) != 0 {
+			key, err = ioutil.ReadFile(c.String("n"))
+			if err != nil {
+				return err
+			}
+			words := strings.Fields(string(key))
+			payload.Netrc = &drone.Netrc{
+				Machine:  words[1],
+				Login:    words[3],
+				Password: words[5],
+			}
+		}
+
 		if len(c.String("i")) != 0 {
 			key, err = ioutil.ReadFile(c.String("i"))
 			if err != nil {
@@ -222,7 +239,6 @@ func execCmd(c *cli.Context) error {
 			payload.Keys = &drone.Key{
 				Private: string(key),
 			}
-			payload.Netrc = &drone.Netrc{}
 		}
 
 		if len(proj) != 0 {
