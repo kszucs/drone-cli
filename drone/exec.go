@@ -205,8 +205,9 @@ func execCmd(c *cli.Context) error {
 			execArgs = append(execArgs, "--"+arg)
 		}
 	}
+
+	image := c.String("image") // "drone/drone-exec:latest"
 	if c.Bool("pull") {
-		image := c.String("image") // "drone/drone-exec:latest"
 		color.Magenta("[DRONE] pulling %s", image)
 		err := cli.PullImage(image, nil)
 		if err != nil {
@@ -292,7 +293,7 @@ func execCmd(c *cli.Context) error {
 
 		out, _ := json.Marshal(payload)
 
-		exit, err := run(cli, execArgs, string(out))
+		exit, err := run(image, cli, execArgs, string(out))
 		if err != nil {
 			return err
 		}
@@ -324,9 +325,9 @@ func execCmd(c *cli.Context) error {
 	return nil
 }
 
-func run(client dockerclient.Client, args []string, input string) (int, error) {
+func run(image string, client dockerclient.Client, args []string, input string) (int, error) {
 
-	image := "drone/drone-exec:latest"
+	// image := "drone/drone-exec:latest"
 	entrypoint := []string{"/bin/drone-exec"}
 	args = append(args, "--", input)
 
