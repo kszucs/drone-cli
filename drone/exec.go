@@ -56,6 +56,12 @@ var ExecCmd = cli.Command{
 			Value:  "",
 		},
 		cli.StringFlag{
+			EnvVar: "DRONE_IMAGE",
+			Name:   "image",
+			Usage:  "drone build runner image",
+			Value:  "drone/drone-exec:latest",
+		},
+		cli.StringFlag{
 			Name:  "i",
 			Value: "",
 			Usage: "identify file injected in the container",
@@ -200,7 +206,7 @@ func execCmd(c *cli.Context) error {
 		}
 	}
 	if c.Bool("pull") {
-		image := "drone/drone-exec:latest"
+		image := c.String("image") // "drone/drone-exec:latest"
 		color.Magenta("[DRONE] pulling %s", image)
 		err := cli.PullImage(image, nil)
 		if err != nil {
