@@ -34,11 +34,14 @@ func main() {
 
 	app.Commands = []cli.Command{
 		BuildCmd,
+		DeployCmd,
 		RepoCmd,
 		ExecCmd,
 		MachineCmd,
 		SecureCmd,
 		UserCmd,
+		SecretCmd,
+		SignCmd,
 	}
 
 	app.Run(os.Args)
